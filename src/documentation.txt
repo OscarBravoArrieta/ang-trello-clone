@@ -1,0 +1,5 @@
+ ng add @angular/cdk
+
+ link donde se encuentran los iconos de trello: https://atlassian.design/resources/logo-library/
+
+ Imagenes útiles: https://undraw.co/illustrations
