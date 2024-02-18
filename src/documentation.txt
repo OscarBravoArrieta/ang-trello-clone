@@ -3,3 +3,11 @@
  link donde se encuentran los iconos de trello: https://atlassian.design/resources/logo-library/
 
  Imagenes útiles: https://undraw.co/illustrations
+
+
+ Creando Overlays -> Menús flotantes
+ https://platzi.com/new-home/clases/4459-angular-tailwind/55310-creando-overlays/
+
+ Importar @import '@angular/cdk/overlay-prebuilt.css', en el archivo de estilos
+ 
+
