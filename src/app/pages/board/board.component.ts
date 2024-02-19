@@ -1,51 +1,115 @@
- import { Component } from '@angular/core'
- import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop'
- import { ToDo } from '../../models/todo.model'
+ import { Component, inject } from '@angular/core'
+ import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop'
+ import { Dialog } from '@angular/cdk/dialog'
+ import { ToDo, Column } from '../../models/todo.model'
+ import { TodoDialogComponent } from '../../components/todo-dialog/todo-dialog.component'
  import { NavbarComponent } from "../../components/navbar/navbar.component"
+import { SourceTextModuleOptions } from 'vm'
 
  @Component({
-    selector: 'app-board',
-    standalone: true,
-    templateUrl: './board.component.html',
-    imports: [DragDropModule, NavbarComponent] ,
-    styles: [
-      `
-      /* Animate items as they're being sorted. */
-      .cdk-drop-list-dragging .cdk-drag {
-        transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-      }
-  
-      /* Animate an item that has been dropped. */
-      .cdk-drag-animating {
-        transition: transform 300ms cubic-bezier(0, 0, 0.2, 1);
-      }
-      `
-    ]
-})
+     selector: 'app-board',
+     standalone: true,
+     templateUrl: './board.component.html',
+     imports: [DragDropModule, NavbarComponent] ,
+     styles: [
+         `
+         /* Animate items as they're being sorted. */
+         .cdk-drop-list-dragging .cdk-drag {
+             transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+         }
+
+         /* Animate an item that has been dropped. */
+         .cdk-drag-animating {
+             transition: transform 300ms cubic-bezier(0, 0, 0.2, 1);
+         }
+         `
+     ]
+ })
  export class BoardComponent {
 
-    todos: ToDo[] = [
-        {
-          id: '1',
-          title: 'Make dishes'
-        },
-        {
-          id: '2',
-          title: 'Buy a unicorn'
-        },
-        {
-          id: '2',
-          title: 'Watch Angular Path in Platzi'
-        }
-      ];
-    
-      constructor() { }
-    
-      ngOnInit(): void {
-      }
-    
-      drop(event: CdkDragDrop<any[]>) {
-        moveItemInArray(this.todos, event.previousIndex, event.currentIndex);
-      }
+     dialog = inject(Dialog)
+
+     columns: Column[] = [
+         {
+             title: 'Todo',
+             todos: [
+                 {
+                     id: '1',
+                     title: 'Make dishes'
+                 },
+                 {
+                     id: '2',
+                     title: 'Buy a unicorn'
+                 },
+                 {
+                     id: '2',
+                     title: 'Watch Angular Path in Platzi'
+                 }
+             ]
+         },
+         {
+             title: 'Doing',
+             todos: [
+                 {
+                     id: '3',
+                     title: 'Wath Angular Patch in platzi'
+                 }
+
+             ]
+         },
+         {
+             title: 'Done',
+             todos: [
+                 {
+                     id: '4',
+                     title: 'Play video games'
+                 }
+             ]
+         }
+     ]
+
+     todos: ToDo[] = [];
+     doing: ToDo[] = [];
+     done: ToDo[] = [];
+
+     constructor() { }
+
+     ngOnInit(): void {
+
+     }
+
+     drop(event: CdkDragDrop<ToDo[]>) {
+         if (event.previousContainer === event.container) {
+             moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+         } else {
+             transferArrayItem(
+                 event.previousContainer.data,
+                 event.container.data,
+                 event.previousIndex,
+                 event.currentIndex
+             )
+         }
+     }
+
+     addColumn() {
+         this.columns.push({
+             title: 'New column',
+             todos: []
+         })
+     }
+
+     openDialog(todo: ToDo) {
+
+         const dialogRef = this.dialog.open(TodoDialogComponent, {
+             minWidth: '300px',
+             data: {
+                 todo: todo
+             }
+         })
+         dialogRef.closed.subscribe(output => {
+             console.log(output)
+         })
+
+     }
 
  }
